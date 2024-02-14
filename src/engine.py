@@ -1,5 +1,6 @@
 import os
 import dis
+import resource
 
 def get_testcases(problem_path: str):
     """
@@ -42,7 +43,7 @@ def check_is_valid_python(code: str):
     return True 
     
 
-def run_code(code : str, problem_path: str) -> str | list[str]:
+def run_code(code : str, problem_path: str, memory_limit_mb: int = 1024) -> str | list[str]:
     """
     Params:
     ---
@@ -56,17 +57,27 @@ def run_code(code : str, problem_path: str) -> str | list[str]:
     
     verdicts = []
     
+    resource.setrlimit(resource.RLIMIT_AS, (memory_limit_mb * 1024 * 1024, resource.RLIM_INFINITY))
+    
     for input, output in get_testcases(problem_path):
         with open("input_file.txt", "w") as file:
             file.write(input)
         try:
             exec(code)
+            
+            _, max_memory_used_kb = resource.getrusage(resource.RUSAGE_CHILDREN)
+            max_memory_used_mb = max_memory_used_kb / 1024
+            
+            if max_memory_used_mb > memory_limit_mb:
+                verdicts.append("MLE")
+                continue
 
             with open("output_file.txt", "r") as file:
                 if file.read() == output:
                     verdicts.append("AC")
                 else:
                     verdicts.append("WA")
+                
         except Exception:
             verdicts.append("RTE")
             continue 
