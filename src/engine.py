@@ -1,6 +1,7 @@
 import os
 import dis
 import resource
+import unittest
 
 def get_testcases(problem_path: str):
     """
@@ -95,3 +96,30 @@ def run_code(code : str, problem_path: str, memory_limit_mb: int = 1024) -> str 
     return verdicts
     
  
+class TestCodeEvaluation(unittest.TestCase):
+
+    def test_correct_execution(self):
+        code_to_evaluate = """
+            print("Hello, World!")
+            """
+
+        problem_path = "example_problem"
+        memory_limit = 256  
+
+        verdicts = run_code(code_to_evaluate, problem_path, memory_limit)
+        self.assertEqual(verdicts, ["AC"])
+
+    def test_memory_limit_exceeded(self):
+        code_to_evaluate = """
+# Intentionally trying to allocate more memory 
+memory_list = [0] * (1024 * 1024 * 1024)  # 1 GB
+"""
+
+        problem_path = "example_problem"
+        memory_limit = 1  
+
+        verdicts = run_code(code_to_evaluate, problem_path, memory_limit)
+        self.assertEqual(verdicts, ["MLE"])
+
+if __name__ == '__main__':
+    unittest.main()
