@@ -59,6 +59,7 @@ for i, submission in list(enumerate(submissions))[::-1]:
         st_ace(submission.source_code, key=i, language="python", font_size=11, theme="chrome", readonly=True, auto_update=True)
         display_verdicts(submission.verdicts)
 
+
     if st.button(f"Delete Submission #{i + 1}"):
         submissions.pop(i)
         st.write(f"Submission #{i + 1} deleted.")
