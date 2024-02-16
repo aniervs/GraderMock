@@ -60,6 +60,3 @@ for i, submission in list(enumerate(submissions))[::-1]:
         display_verdicts(submission.verdicts)
 
 
-    if st.button(f"Delete Submission #{i + 1}"):
-        submissions.pop(i)
-        st.write(f"Submission #{i + 1} deleted.")
